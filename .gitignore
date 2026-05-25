@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.pyc
+
+# Virtual Env
+venv/
+.env
+
+# DVC
+/data/
+/models/
+
+# MLflow
+mlruns/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
