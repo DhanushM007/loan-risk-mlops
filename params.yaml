@@ -1,0 +1,21 @@
+prepare:
+  test_size: 0.2
+  random_state: 42
+  target_column: Loan_Status
+
+train:
+  model: RandomForestClassifier
+  n_estimators: 100
+  max_depth: 10
+  min_samples_split: 5
+  min_samples_leaf: 2
+  random_state: 42
+  class_weight: balanced
+
+evaluate:
+  metrics:
+    - accuracy
+    - precision
+    - recall
+    - f1
+    - roc_auc

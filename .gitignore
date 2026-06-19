@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment variables — NEVER commit .env
+.env
+*.env
+
+# DVC
+/data/raw/
+/data/processed/
+/models/
+*.dvc/cache
+
+# MLflow
+mlruns/
+mlartifacts/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Testing
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+*.tar
+
+# Reports (generated artifacts)
+reports/*.html
+reports/trivy_report.json
+
+# OS
+.DS_Store
+Thumbs.db
