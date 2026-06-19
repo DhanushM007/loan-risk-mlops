@@ -26,11 +26,11 @@ def load_data():
 
 def compute_metrics(y_true, y_pred, y_prob) -> dict:
     return {
-        "accuracy":  round(accuracy_score(y_true, y_pred), 4),
+        "accuracy": round(accuracy_score(y_true, y_pred), 4),
         "precision": round(precision_score(y_true, y_pred, zero_division=0), 4),
-        "recall":    round(recall_score(y_true, y_pred, zero_division=0), 4),
-        "f1":        round(f1_score(y_true, y_pred, zero_division=0), 4),
-        "roc_auc":   round(roc_auc_score(y_true, y_prob), 4),
+        "recall": round(recall_score(y_true, y_pred, zero_division=0), 4),
+        "f1": round(f1_score(y_true, y_pred, zero_division=0), 4),
+        "roc_auc": round(roc_auc_score(y_true, y_prob), 4),
     }
 
 
@@ -49,12 +49,10 @@ def main():
     with open("reports/metrics.json", "w") as f:
         json.dump(metrics, f, indent=2)
 
-    # Confusion matrix for DVC plots
     cm = confusion_matrix(y_test, y_pred).tolist()
     with open("reports/confusion_matrix.json", "w") as f:
         json.dump({"confusion_matrix": cm}, f)
 
-    # Log to MLflow
     mlflow.set_experiment("loan-risk-prediction")
     with mlflow.start_run(run_name="evaluation"):
         mlflow.log_metrics(metrics)

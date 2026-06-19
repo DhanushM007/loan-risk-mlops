@@ -10,11 +10,10 @@ import pandas as pd
 import numpy as np
 import joblib
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder, StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.compose import ColumnTransformer
 from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
@@ -35,11 +34,9 @@ def load_data(path: str) -> pd.DataFrame:
 def clean_data(df: pd.DataFrame, target_col: str) -> pd.DataFrame:
     logger.info("Cleaning dataset...")
 
-    # Drop Loan_ID if present
     if "Loan_ID" in df.columns:
         df = df.drop(columns=["Loan_ID"])
 
-    # Encode target
     df[target_col] = df[target_col].map({"Y": 1, "N": 0})
     df = df.dropna(subset=[target_col])
 

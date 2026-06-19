@@ -2,7 +2,6 @@
 Tests for the FastAPI prediction endpoints.
 """
 
-import pytest
 from fastapi.testclient import TestClient
 from src.app import app
 
@@ -23,7 +22,6 @@ def test_health_endpoint():
 
 
 def test_predict_endpoint_demo_mode():
-    """Test prediction in demo mode (no model loaded)."""
     payload = {
         "gender": "Male",
         "married": "Yes",

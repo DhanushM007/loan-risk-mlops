@@ -7,13 +7,12 @@ import os
 import time
 import logging
 import joblib
-import numpy as np
 import pandas as pd
 from contextlib import asynccontextmanager
 from typing import Optional, List
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse, PlainTextResponse
+from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
 from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 
@@ -23,7 +22,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# ── Prometheus metrics ──────────────────────────────────────────────────────
 REQUEST_COUNT = Counter(
     "api_requests_total", "Total API requests", ["method", "endpoint", "status"]
 )
@@ -34,7 +32,6 @@ PREDICTION_COUNT = Counter(
     "predictions_total", "Total predictions made", ["result"]
 )
 
-# ── Global model / preprocessor ─────────────────────────────────────────────
 MODEL = None
 PREPROCESSOR = None
 
@@ -43,7 +40,7 @@ PREPROCESSOR = None
 async def lifespan(app: FastAPI):
     global MODEL, PREPROCESSOR
     model_path = os.getenv("MODEL_PATH", "models/loan_risk_model.joblib")
-    prep_path  = os.getenv("PREPROCESSOR_PATH", "data/processed/preprocessor.joblib")
+    prep_path = os.getenv("PREPROCESSOR_PATH", "data/processed/preprocessor.joblib")
 
     if os.path.exists(model_path) and os.path.exists(prep_path):
         MODEL = joblib.load(model_path)
@@ -62,7 +59,6 @@ app = FastAPI(
 )
 
 
-# ── Schemas ─────────────────────────────────────────────────────────────────
 class LoanApplication(BaseModel):
     gender: Optional[str] = Field(None, example="Male")
     married: Optional[str] = Field(None, example="Yes")
@@ -87,7 +83,6 @@ class BatchRequest(BaseModel):
     applications: List[LoanApplication]
 
 
-# ── Middleware ───────────────────────────────────────────────────────────────
 @app.middleware("http")
 async def metrics_middleware(request: Request, call_next):
     start = time.time()
@@ -105,7 +100,6 @@ async def metrics_middleware(request: Request, call_next):
     return response
 
 
-# ── Helpers ──────────────────────────────────────────────────────────────────
 def application_to_df(app_data: LoanApplication) -> pd.DataFrame:
     return pd.DataFrame([{
         "Gender": app_data.gender,
@@ -124,7 +118,6 @@ def application_to_df(app_data: LoanApplication) -> pd.DataFrame:
 
 def make_prediction(df: pd.DataFrame) -> PredictionResponse:
     if MODEL is None or PREPROCESSOR is None:
-        # Demo mode: return a dummy prediction
         return PredictionResponse(
             loan_status="Approved (Demo)",
             probability=0.75,
@@ -145,7 +138,6 @@ def make_prediction(df: pd.DataFrame) -> PredictionResponse:
     )
 
 
-# ── Routes ───────────────────────────────────────────────────────────────────
 @app.get("/", tags=["Health"])
 def root():
     return {"message": "Loan Risk Prediction API", "status": "running", "version": "1.0.0"}
