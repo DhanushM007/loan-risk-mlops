@@ -1,0 +1,99 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw/loan_data.csv
+      hash: md5
+      md5: 3bc055a1d2cca0386fa2d03864fe9b0a
+      size: 38013
+    - path: src/preprocess.py
+      hash: md5
+      md5: 27c457701c95af874f4c6622717300a7
+      size: 3400
+    params:
+      params.yaml:
+        prepare.random_state: 42
+        prepare.target_column: Loan_Status
+        prepare.test_size: 0.2
+    outs:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: e661146189c5899cde5c227971eebf32
+      size: 19840
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 2008a3d61e76034817dbaf618b219963
+      size: 78993
+    - path: data/processed/preprocessor.joblib
+      hash: md5
+      md5: ac359d64c30bbc1661fdaed920db7687
+      size: 5511
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 066f4f1c29364fbdd73da023d4a5ceee
+      size: 382
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: 75f70a9ad7a69d773518d9e81ef7a5ca
+      size: 1486
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed/X_train.csv
+      hash: md5
+      md5: 2008a3d61e76034817dbaf618b219963
+      size: 78993
+    - path: data/processed/preprocessor.joblib
+      hash: md5
+      md5: ac359d64c30bbc1661fdaed920db7687
+      size: 5511
+    - path: data/processed/y_train.csv
+      hash: md5
+      md5: 75f70a9ad7a69d773518d9e81ef7a5ca
+      size: 1486
+    - path: src/train.py
+      hash: md5
+      md5: efe8c987ef5d1b1d944a6399a5ab94ff
+      size: 1888
+    params:
+      params.yaml:
+        train.class_weight: balanced
+        train.max_depth: 10
+        train.min_samples_leaf: 2
+        train.min_samples_split: 5
+        train.n_estimators: 100
+        train.random_state: 42
+    outs:
+    - path: models/loan_risk_model.joblib
+      hash: md5
+      md5: be5b2f45c3b50a9ce4cb296ea0cd5ea3
+      size: 1003193
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed/X_test.csv
+      hash: md5
+      md5: e661146189c5899cde5c227971eebf32
+      size: 19840
+    - path: data/processed/y_test.csv
+      hash: md5
+      md5: 066f4f1c29364fbdd73da023d4a5ceee
+      size: 382
+    - path: models/loan_risk_model.joblib
+      hash: md5
+      md5: be5b2f45c3b50a9ce4cb296ea0cd5ea3
+      size: 1003193
+    - path: src/evaluate.py
+      hash: md5
+      md5: b597d98db46abb212d3acb341af89a45
+      size: 2078
+    outs:
+    - path: reports/confusion_matrix.json
+      hash: md5
+      md5: ec270c13fdfd1c76d4b50fdd200279df
+      size: 42
+    - path: reports/metrics.json
+      hash: md5
+      md5: 2d4a4c2dd5e4e50a5d07a668a7a309d5
+      size: 110
