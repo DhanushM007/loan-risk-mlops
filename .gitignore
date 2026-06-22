@@ -20,6 +20,8 @@ env/
 
 # DVC
 data/raw/*.csv
+data/processed/
+models/
 *.dvc/cache
 
 # MLflow
