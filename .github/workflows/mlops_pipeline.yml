@@ -84,7 +84,7 @@ jobs:
           aws-region: ap-south-1
 
       - name: Pull DVC data
-        run: dvc pull
+        run: dvc pull --force
 
       - name: Reproduce DVC pipeline
         run: dvc repro
