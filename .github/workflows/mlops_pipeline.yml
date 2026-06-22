@@ -76,19 +76,21 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Configure DVC remote (optional)
-        run: |
-          dvc remote modify myremote access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }} || true
-          dvc remote modify myremote secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }} || true
-        continue-on-error: true
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
 
       - name: Pull DVC data
-        run: dvc pull || echo "DVC pull skipped (no remote configured)"
-        continue-on-error: true
+        run: dvc pull
 
       - name: Reproduce DVC pipeline
-        run: dvc repro --no-lock || echo "Pipeline skipped (no data)"
-        continue-on-error: true
+        run: dvc repro
+
+      - name: Push updated artifacts
+        run: dvc push
 
   # ── Job 4: Docker Build ─────────────────────────────────────────────────────
   docker-build:
