@@ -54,8 +54,8 @@ stages:
       size: 1486
     - path: src/train.py
       hash: md5
-      md5: efe8c987ef5d1b1d944a6399a5ab94ff
-      size: 1888
+      md5: 70e5863617d7646bba613de6a38cc951
+      size: 1876
     params:
       params.yaml:
         train.class_weight: balanced
@@ -86,8 +86,8 @@ stages:
       size: 1003193
     - path: src/evaluate.py
       hash: md5
-      md5: b597d98db46abb212d3acb341af89a45
-      size: 2078
+      md5: 2e7a8ce31f55210e91d3d3a935610091
+      size: 2008
     outs:
     - path: reports/confusion_matrix.json
       hash: md5
