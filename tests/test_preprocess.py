@@ -2,9 +2,7 @@
 Tests for preprocessing module.
 """
 
-import pytest
 import pandas as pd
-import numpy as np
 
 
 def test_load_params():

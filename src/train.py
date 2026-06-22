@@ -6,7 +6,6 @@ Trains a Random Forest classifier with MLflow experiment tracking.
 import os
 import yaml
 import logging
-import json
 import joblib
 import pandas as pd
 import mlflow

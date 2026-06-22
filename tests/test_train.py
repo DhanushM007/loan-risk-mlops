@@ -2,7 +2,6 @@
 Tests for training module.
 """
 
-import pytest
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 
