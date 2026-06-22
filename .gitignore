@@ -47,10 +47,6 @@ htmlcov/
 # Docker
 *.tar
 
-# Reports (generated artifacts)
-reports/*.html
-reports/trivy_report.json
-
 # OS
 .DS_Store
 Thumbs.db
