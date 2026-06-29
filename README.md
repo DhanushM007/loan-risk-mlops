@@ -18,7 +18,6 @@ A production-grade MLOps pipeline for predicting loan risk built with industry-s
 ---
 
 ## 🏗️ Architecture
-
 Dataset (Kaggle)
 
 │
@@ -27,7 +26,7 @@ Dataset (Kaggle)
 
 ┌─────────────────┐
 
-│  DVC Tracking   │  ← Raw data versioned with DVC + S3
+│  DVC Tracking   │  ← Raw data versioned with DVC + AWS S3
 
 └────────┬────────┘
 
@@ -67,7 +66,7 @@ Dataset (Kaggle)
 
 ┌─────────────────┐
 
-│  MLflow Server  │  ← Experiment tracking, model registry
+│  MLflow Server  │  ← Experiment tracking, parameter logging
 
 └────────┬────────┘
 
@@ -77,7 +76,7 @@ Dataset (Kaggle)
 
 ┌─────────────────┐
 
-│  FastAPI + Docker│ ← REST API, containerized, Prometheus metrics
+│ FastAPI + Docker│  ← REST API, containerized, Prometheus metrics
 
 └────────┬────────┘
 
@@ -152,23 +151,25 @@ loan-risk-mlops/
 
 ├── reports/
 
-│   ├── metrics.json            # Model evaluation metrics
+│   ├── metrics.json
 
-│   ├── confusion_matrix.json   # Confusion matrix data
+│   ├── confusion_matrix.json
 
-│   ├── drift_report.html       # Evidently AI drift report
+│   ├── drift_report.html
 
-│   └── trivy_report.json       # Security scan results
+│   └── trivy_report.json
+
+├── screenshots/                # Evidence screenshots
 
 ├── .github/workflows/
 
 │   └── mlops_pipeline.yml      # GitHub Actions CI/CD
 
-├── dvc.yaml                    # DVC pipeline stages
+├── dvc.yaml
 
-├── dvc.lock                    # DVC reproducibility lock
+├── dvc.lock
 
-├── params.yaml                 # Hyperparameters
+├── params.yaml
 
 ├── requirements.txt
 
@@ -194,7 +195,7 @@ loan-risk-mlops/
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/<your-username>/loan-risk-mlops.git
+git clone https://github.com/DhanushM007/loan-risk-mlops.git
 cd loan-risk-mlops
 ```
 
@@ -287,7 +288,7 @@ curl -X POST http://localhost:8000/predict \
 
 ## 🔄 CI/CD Pipeline
 
-GitHub Actions (`.github/workflows/mlops_pipeline.yml`) runs automatically on every push to `main` or `develop`:
+GitHub Actions (`.github/workflows/mlops_pipeline.yml`) runs automatically on every push:
 Push to GitHub
 
 │
@@ -330,9 +331,9 @@ Push to GitHub
 
 ## 📈 Monitoring & Drift Detection
 
-- **Prometheus** scrapes `/metrics` endpoint every 15s — tracks request count, latency, prediction counts
-- **Grafana** dashboard at `localhost:3000` visualizes API health
-- **Evidently AI** compares training vs production data distributions:
+- **Prometheus** scrapes `/metrics` every 15s
+- **Grafana** dashboard at `localhost:3000`
+- **Evidently AI** drift detection:
 
 ```bash
 python monitoring/drift_report.py
@@ -344,10 +345,10 @@ python monitoring/drift_report.py
 ## 🔒 DevSecOps
 
 - Docker image scanned with **Trivy** on every CI run
-- All secrets stored in **GitHub Secrets** — never in code
-- `.env` excluded via `.gitignore` (`.env.example` provided)
+- All secrets in **GitHub Secrets** — never in code
+- `.env` excluded via `.gitignore`
 - Non-root user inside Docker container
-- See `security/compliance_documentation.md` for full details
+- See `security/compliance_documentation.md`
 
 ---
 
@@ -358,26 +359,65 @@ python monitoring/drift_report.py
 | `main` | Production-ready, triggers full CI/CD |
 | `develop` | Integration branch |
 | `feature/*` | New features |
-| `hotfix/*` | Emergency production fixes |
+| `hotfix/*` | Emergency fixes |
 
-See `branching_strategy.md` for full details.
+---
+
+## 📸 Screenshots
+
+### 1. MLflow Experiment Runs
+![MLflow UI](screenshots/01_mlflow_ui.png)
+
+### 2. MLflow Metrics
+![MLflow Metrics](screenshots/01_mlflow_ui_metrics.png)
+
+### 3. MLflow Parameters
+![MLflow Parameters](screenshots/01_mlflow_ui_parameters.png)
+
+### 4. DVC Pipeline DAG
+![DVC DAG](screenshots/02_dvc_dag.png)
+
+### 5. DVC Metrics
+![DVC Metrics](screenshots/03_dvc_metrics.png)
+
+### 6. API Documentation (Swagger UI)
+![API Docs](screenshots/04_api_docs.png)
+
+### 7. API Prediction Response
+![API Prediction](screenshots/05_api_prediction.png)
+
+### 8. Docker Container Running
+![Docker](screenshots/06_docker_running.png)
+
+### 9. GitHub Actions — All Jobs Passing
+![CI/CD](screenshots/07_github_actions.png)
+
+### 10. DockerHub — Image with Latest Tag
+![DockerHub](screenshots/08_dockerhub.png)
+
+### 11. Data Drift Report (Evidently AI)
+![Drift Report](screenshots/09_drift_report.png)
+
+### 12. GitHub Secrets Configuration
+![Secrets](screenshots/10_github_secrets.png)
 
 ---
 
 ## ⚠️ Challenges & Limitations
 
 1. **DVC + Git conflict** — processed files must be managed exclusively by DVC, not committed to Git
-2. **MLflow in CI** — MLflow tracking server not running in GitHub Actions; runs are tracked locally only
-3. **Demo mode** — API runs without model in Docker build; model must be mounted at runtime
-4. **Free tier S3** — Limited to 5GB; large datasets may require paid storage
+2. **MLflow in CI** — MLflow tracking runs locally; no remote tracking server in GitHub Actions
+3. **Demo mode** — API runs without model in Docker build; model mounted at runtime via volume
+4. **Free tier S3** — Limited to 5GB storage for DVC remote
 
 ## 🚀 Future Improvements
 
 1. Kubernetes deployment for auto-scaling
-2. Automated retraining pipeline triggered by drift detection
-3. Model registry with staging/production promotion via MLflow
-4. Real-time Grafana dashboards connected to live API metrics
+2. Automated retraining triggered by drift detection alerts
+3. MLflow Model Registry with staging/production promotion
+4. Real-time Grafana dashboards connected to live API
 5. Explainable AI (SHAP values) for loan decision transparency
+6. Cloud deployment on AWS ECS or GCP Cloud Run
 
 ---
 
